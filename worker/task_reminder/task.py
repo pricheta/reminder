@@ -1,0 +1,47 @@
+from datetime import datetime, timezone, timedelta
+
+from pydantic import BaseModel
+
+from database import DatabaseClient
+from vk_client import VKClient
+
+from worker.task_reminder.models import Task
+
+
+class TaskReminder:
+    def __init__(self, database_client: DatabaseClient, vk_client: VKClient):
+        self.database_client = database_client
+        self.vk_client = vk_client
+
+
+    def run_once(self):
+        tasks_to_remind_about = self._get_tasks_to_remind_about()
+        if not tasks_to_remind_about:
+            return
+
+        self._send_reminder(tasks_to_remind_about)
+
+
+    def _send_reminder(self, tasks_to_remind_about: list[Task]) -> None:
+        message = "Пора выполнять таски:\n\n"
+
+        for task in tasks_to_remind_about:
+            message += f"{task.title}\n"
+
+        self.vk_client.send_message(message)
+
+
+    def _get_tasks_to_remind_about(self) -> list[Task]:
+        db_tasks = self.database_client.get_all_tasks()
+        if not db_tasks:
+            return []
+
+        all_tasks = [Task.model_validate(db_task) for db_task in db_tasks]
+        tasks_to_remind_about = []
+        now = datetime.now(tz=timezone.utc)
+
+        for task in all_tasks:
+            if task.last_time_done + timedelta(hours=task.frequency_hours) < now:
+                tasks_to_remind_about.append(task)
+
+        return tasks_to_remind_about

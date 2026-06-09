@@ -45,6 +45,6 @@ class DatabaseClient:
             expire_on_commit=False
         )
 
-    def get_tasks(self) -> list[Task]:
+    def get_all_tasks(self) -> list[Task]:
         with self.session_maker() as session:
             return list(session.scalars(select(Task)))

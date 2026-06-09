@@ -26,7 +26,7 @@ class Worker:
 
             threads = []
             for task in self.tasks:
-                threads.append(Thread(target=task))
+                threads.append(Thread(target=task, daemon=True))
 
             for thread in threads:
                 thread.start()

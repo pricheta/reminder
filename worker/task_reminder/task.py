@@ -37,11 +37,11 @@ class TaskReminder:
             return []
 
         all_tasks = [Task.model_validate(db_task) for db_task in db_tasks]
-        tasks_to_remind_about = []
         now = datetime.now(tz=timezone.utc)
 
-        for task in all_tasks:
-            if task.last_time_done + timedelta(hours=task.frequency_hours) < now:
-                tasks_to_remind_about.append(task)
+        tasks_to_remind_about = [
+            task for task in all_tasks
+            if task.last_time_done + timedelta(hours=task.frequency_hours) < now
+        ]
 
         return tasks_to_remind_about

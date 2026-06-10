@@ -31,5 +31,5 @@ async def mark_task_done(task_id: int, database_client: DatabaseClient = Depends
         task.next_time_to_do += timedelta(hours=task.frequency_hours)
 
     if updated:
-        database_client.update_task_last_time_done(task_id=task.id, task_last_time_done=task.next_time_to_do)
+        database_client.update_task_next_time_to_do(task_id=task.id, next_time_to_do=task.next_time_to_do)
 

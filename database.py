@@ -55,12 +55,12 @@ class DatabaseClient:
             statement = select(Task)
             return list(session.scalars(statement))
 
-    def update_task_last_time_done(self, task_id: int, task_last_time_done: datetime):
+    def update_task_next_time_to_do(self, task_id: int, next_time_to_do: datetime):
         with self.session_maker() as session:
             statement = (
                 update(Task)
                 .where(Task.id == task_id)
-                .values(last_time_done=task_last_time_done)
+                .values(next_time_to_do=next_time_to_do)
             )
             session.execute(statement)
             session.commit()

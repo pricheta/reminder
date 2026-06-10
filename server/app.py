@@ -26,6 +26,7 @@ async def mark_task_done(task_id: int, database_client: DatabaseClient = Depends
 
     if not task.frequency_hours:
         database_client.delete_task(task_id=task.id)
+        return
 
     now = datetime.now()
     while task.next_time_to_do < now:

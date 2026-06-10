@@ -29,7 +29,7 @@ class TaskReminder:
         message = "Пора выполнять таски:\n\n"
 
         for task in tasks_to_remind_about:
-            message += f"{task.title}\n"
+            message += f"{task.id}.{task.title}\n"
 
         logger.info('Отправляю напоминалку с сообщением:\n\n{message}')
         self.vk_client.send_message(message)

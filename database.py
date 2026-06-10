@@ -19,17 +19,17 @@ class Task(Base):
 
 
 class DatabaseClientConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="DATABASE_")
+    model_config = SettingsConfigDict(env_prefix="POSTGRES_")
 
     HOST: str
     PORT: int
-    DATABASE: str
-    USERNAME: str
+    DB: str
+    USER: str
     PASSWORD: str
 
     @property
     def database_url(self) -> str:
-        return f"postgresql+psycopg2://{self.USERNAME}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DATABASE}"
+        return f"postgresql+psycopg2://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DB}"
 
 
 class DatabaseClient:
@@ -44,6 +44,12 @@ class DatabaseClient:
             autoflush=False,
             expire_on_commit=False
         )
+
+    def update_task_last_time_done(self, task_title: str, last_time_done: datetime):
+        with self.session_maker() as session:
+            task = session.query(Task).filter(Task.title == task_title).first()
+            task.last_time_done = last_time_done
+            session.commit()
 
     def get_all_tasks(self) -> list[Task]:
         with self.session_maker() as session:

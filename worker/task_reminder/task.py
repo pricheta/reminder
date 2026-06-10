@@ -26,7 +26,7 @@ class TaskReminder:
 
 
     def _send_reminder(self, tasks_to_remind_about: list[Task]) -> None:
-        message = "Пора выполнять таски:\n\n"
+        message = "Пора выполнять таски:\n"
 
         for task in tasks_to_remind_about:
             message += f"{task.id}.{task.title}\n"

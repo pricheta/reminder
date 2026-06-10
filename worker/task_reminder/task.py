@@ -36,8 +36,8 @@ class TaskReminder:
         if not db_tasks:
             return []
 
-        all_tasks = [Task.model_validate(db_task) for db_task in db_tasks]
-        now = datetime.now(tz=timezone.utc)
+        all_tasks = [Task.model_validate(db_task, from_attributes=True) for db_task in db_tasks]
+        now = datetime.now()
 
         tasks_to_remind_about = [
             task for task in all_tasks

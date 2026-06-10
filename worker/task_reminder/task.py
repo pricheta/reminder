@@ -47,6 +47,7 @@ class TaskReminder:
             task for task in all_tasks
             if task.last_time_done + timedelta(hours=task.frequency_hours) < now
         ]
+        tasks_to_remind_about = sorted(tasks_to_remind_about, key=lambda task: task.id)
 
         logger.info(f'Таски, о которых нужно напомнить: {tasks_to_remind_about}')
         return tasks_to_remind_about

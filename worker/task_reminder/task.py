@@ -1,11 +1,14 @@
-from datetime import datetime, timezone, timedelta
-
-from pydantic import BaseModel
+import logging
+from datetime import datetime, timedelta
 
 from database import DatabaseClient
 from vk_client import VKClient
 
 from worker.task_reminder.models import Task
+
+
+logger = logging.getLogger(__name__)
+
 
 
 class TaskReminder:
@@ -28,6 +31,7 @@ class TaskReminder:
         for task in tasks_to_remind_about:
             message += f"{task.title}\n"
 
+        logger.info('Отправляю напоминалку с сообщением:\n\n{message}')
         self.vk_client.send_message(message)
 
 
@@ -44,4 +48,5 @@ class TaskReminder:
             if task.last_time_done + timedelta(hours=task.frequency_hours) < now
         ]
 
+        logger.info(f'Таски, о которых нужно напомнить: {tasks_to_remind_about}')
         return tasks_to_remind_about

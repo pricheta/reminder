@@ -21,3 +21,21 @@ services:
 
     ports:
       - "5432:5432"
+
+  app:
+    build: .
+    container_name: app
+    restart: unless-stopped
+
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 128M
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      - db

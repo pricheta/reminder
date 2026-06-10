@@ -1,4 +1,10 @@
+import threading
+
+import uvicorn
 from dotenv import load_dotenv
+
+from server.app import fastapi_app
+
 load_dotenv()
 
 from worker.app import Worker, WorkerConfig
@@ -17,6 +23,17 @@ if __name__ == "__main__":
     task_reminder = TaskReminder(database_client, vk_client)
 
     worker_config = WorkerConfig()
-    worker = Worker()
+    worker = Worker(worker_config)
     worker.add_task(task_reminder.run_once)
+
+    threads = [
+        threading.Thread(target=worker.run),
+        threading.Thread(target=lambda: uvicorn.run(fastapi_app, host="0.0.0.0", port=8000, log_level="info"))
+    ]
+
+    for thread in threads:
+        thread.start()
+
+    for thread in threads:
+        thread.join()
 

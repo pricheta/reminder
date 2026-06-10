@@ -13,7 +13,6 @@ class Task(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
-    is_repeatable: Mapped[bool] = mapped_column(Boolean, nullable=False)
     frequency_hours: Mapped[int] = mapped_column(Integer, nullable=True)
     next_time_to_do: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 

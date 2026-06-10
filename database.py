@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import String, Integer, DateTime, create_engine, select
+from sqlalchemy import String, Integer, DateTime, create_engine, select, update
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 from datetime import datetime
 
@@ -45,12 +45,22 @@ class DatabaseClient:
             expire_on_commit=False
         )
 
-    def update_task_last_time_done(self, task_title: str, last_time_done: datetime):
+    def get_task(self, task_id: int) -> Task | None:
         with self.session_maker() as session:
-            task = session.query(Task).filter(Task.title == task_title).first()
-            task.last_time_done = last_time_done
-            session.commit()
+            statement = select(Task).where(Task.id == task_id)
+            return session.scalars(statement).first()
 
     def get_all_tasks(self) -> list[Task]:
         with self.session_maker() as session:
-            return list(session.scalars(select(Task)))
+            statement = select(Task)
+            return list(session.scalars(statement))
+
+    def update_task_last_time_done(self, task_id: int, task_last_time_done: datetime):
+        with self.session_maker() as session:
+            statement = (
+                update(Task)
+                .where(Task.id == task_id)
+                .values(last_time_done=task_last_time_done)
+            )
+            session.execute(statement)
+            session.commit()

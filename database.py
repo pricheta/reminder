@@ -15,7 +15,7 @@ class Task(Base):
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str | None] = mapped_column(String(500), nullable=True)
     frequency_hours: Mapped[int] = mapped_column(Integer, nullable=False)
-    last_time_done: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    next_time_to_do: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
 
 class DatabaseClientConfig(BaseSettings):

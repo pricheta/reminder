@@ -45,7 +45,7 @@ class TaskReminder:
 
         tasks_to_remind_about = [
             task for task in all_tasks
-            if task.last_time_done + timedelta(hours=task.frequency_hours) < now
+            if task.next_time_to_do < now
         ]
         tasks_to_remind_about = sorted(tasks_to_remind_about, key=lambda task: task.id)
 

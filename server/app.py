@@ -24,9 +24,12 @@ async def mark_task_done(task_id: int, database_client: DatabaseClient = Depends
 
     task = Task.model_validate(db_task, from_attributes=True)
 
+    updated = False
     now = datetime.now()
-    while task.last_time_done < now - timedelta(hours=task.frequency_hours):
-        task.last_time_done += timedelta(hours=task.frequency_hours)
+    while task.next_time_to_do < now:
+        updated = True
+        task.next_time_to_do += timedelta(hours=task.frequency_hours)
 
-    database_client.update_task_last_time_done(task_id=task.id, task_last_time_done=task.last_time_done)
+    if updated:
+        database_client.update_task_last_time_done(task_id=task.id, task_last_time_done=task.next_time_to_do)
 

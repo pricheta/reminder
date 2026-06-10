@@ -36,6 +36,7 @@ class Worker:
             logger.info(f"Worker running {len(threads)} tasks")
             for thread in threads:
                 thread.start()
+
             for thread in threads:
                 thread.join()
 

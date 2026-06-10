@@ -30,7 +30,7 @@ async def mark_task_done(task_id: int, database_client: DatabaseClient = Depends
 
     now = datetime.now()
     while task.next_time_to_do < now:
-        task.next_time_to_do += timedelta(hours=task.frequency_hours) # type: ignore
+        task.next_time_to_do += timedelta(hours=task.frequency_hours)
 
     database_client.update_task_next_time_to_do(task_id=task.id, next_time_to_do=task.next_time_to_do)
 
@@ -43,9 +43,9 @@ async def delay_task(task_id: int, times: int, database_client: DatabaseClient =
 
     task = Task.model_validate(db_task, from_attributes=True)
 
-    if not task.frequency_hours:
+    if task.frequency_hours:
         for _ in range(times):
-            task.next_time_to_do += timedelta(hours=task.frequency_hours) # type: ignore
+            task.next_time_to_do += timedelta(hours=task.frequency_hours)
     else:
         task.next_time_to_do += timedelta(hours=times)
 

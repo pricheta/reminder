@@ -24,12 +24,25 @@ async def mark_task_done(task_id: int, database_client: DatabaseClient = Depends
 
     task = Task.model_validate(db_task, from_attributes=True)
 
-    updated = False
+    if not task.is_repeatable:
+        database_client.delete_task(task_id=task.id)
+
     now = datetime.now()
     while task.next_time_to_do < now:
-        updated = True
-        task.next_time_to_do += timedelta(hours=task.frequency_hours)
+        task.next_time_to_do += timedelta(hours=task.frequency_hours) # type: ignore
 
-    if updated:
-        database_client.update_task_next_time_to_do(task_id=task.id, next_time_to_do=task.next_time_to_do)
+    database_client.update_task_next_time_to_do(task_id=task.id, next_time_to_do=task.next_time_to_do)
 
+
+@fastapi_app.get("/delay_task", status_code=status.HTTP_200_OK)
+async def mark_task_done(task_id: int, times: int, database_client: DatabaseClient = Depends(get_database_client)) -> None:
+    db_task = database_client.get_task(task_id)
+    if not db_task:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    task = Task.model_validate(db_task, from_attributes=True)
+
+    for _ in range(times):
+        task.next_time_to_do += timedelta(hours=task.frequency_hours) # type: ignore
+
+    database_client.update_task_next_time_to_do(task_id=task.id, next_time_to_do=task.next_time_to_do)

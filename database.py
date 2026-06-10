@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import String, Integer, DateTime, create_engine, select, update
+from sqlalchemy import String, Integer, DateTime, create_engine, select, update, Boolean, delete
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 from datetime import datetime
 
@@ -11,10 +11,10 @@ class Base(DeclarativeBase):
 class Task(Base):
     __tablename__ = "tasks"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
-    description: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    frequency_hours: Mapped[int] = mapped_column(Integer, nullable=False)
+    is_repeatable: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    frequency_hours: Mapped[int] = mapped_column(Integer, nullable=True)
     next_time_to_do: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
 
@@ -62,5 +62,11 @@ class DatabaseClient:
                 .where(Task.id == task_id)
                 .values(next_time_to_do=next_time_to_do)
             )
+            session.execute(statement)
+            session.commit()
+
+    def delete_task(self, task_id: int) -> None:
+        with self.session_maker() as session:
+            statement = delete(Task).where(Task.id == task_id)
             session.execute(statement)
             session.commit()

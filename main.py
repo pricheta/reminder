@@ -1,12 +1,10 @@
-import threading
-
-import uvicorn
 from dotenv import load_dotenv
-
-from server.app import fastapi_app
-
 load_dotenv()
 
+import threading
+import uvicorn
+
+from server.app import fastapi_app
 from worker.app import Worker, WorkerConfig
 from worker.task_reminder.task import TaskReminder
 from vk_client import VKClient, VKClientConfig

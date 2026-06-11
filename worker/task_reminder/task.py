@@ -45,7 +45,7 @@ class TaskReminder:
 
         tasks_to_remind_about = []
         for task in all_tasks:
-            delay_active = task.delayed_until and task.delayed_until < now
+            delay_active = task.delayed_until and  now < task.delayed_until
             should_remind = task.remind_after < now and not delay_active
             if should_remind:
                 tasks_to_remind_about.append(task)

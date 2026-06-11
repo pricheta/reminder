@@ -28,9 +28,9 @@ services:
       timeout: 3s
       retries: 5
 
-  app:
+  reminder-app:
     build: .
-    container_name: app
+    container_name: reminder-app
     restart: unless-stopped
 
     deploy:

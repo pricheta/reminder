@@ -47,4 +47,6 @@ async def delay_task(
 
     db_task.delayed_until = db_task.remind_after + timedelta(minutes=minutes, hours=hours, days=days)
 
+    database_client.update(db_task)
+
     return Task.model_validate(db_task, from_attributes=True)

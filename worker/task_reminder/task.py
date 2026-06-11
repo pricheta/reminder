@@ -29,7 +29,7 @@ class TaskReminder:
         message = "Пора выполнять таски:\n"
 
         for task in tasks_to_remind_about:
-            message += f"{task.id}.{task.title}\n"
+            message += f"{task}\n"
 
         logger.info('Отправляю напоминалку с сообщением:\n\n{message}')
         self.vk_client.send_message(message)
@@ -45,7 +45,7 @@ class TaskReminder:
 
         tasks_to_remind_about = []
         for task in all_tasks:
-            delay_active = not task.delayed_until or task.delayed_until < now
+            delay_active = task.delayed_until and task.delayed_until < now
             should_remind = task.remind_after < now and not delay_active
             if should_remind:
                 tasks_to_remind_about.append(task)

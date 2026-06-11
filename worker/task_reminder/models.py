@@ -9,3 +9,6 @@ class Task(BaseModel):
     frequency_hours: int | None = Field(gt=0, default=None)
     delayed_until: datetime | None
     remind_after: datetime
+
+    def __str__(self) -> str:
+        return f"{self.id}. {self.title}"

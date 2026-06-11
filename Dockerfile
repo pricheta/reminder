@@ -19,7 +19,4 @@ COPY worker worker
 
 EXPOSE 8000
 
-COPY alembic.ini alembic.ini
-COPY alembic alembic
-
 CMD ["uv", "run", "main.py"]

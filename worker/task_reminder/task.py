@@ -36,17 +36,20 @@ class TaskReminder:
 
 
     def _get_tasks_to_remind_about(self) -> list[Task]:
-        db_tasks = self.database_client.get_all_tasks()
-        if not db_tasks:
+        all_db_tasks = self.database_client.get_all_tasks()
+        if not all_db_tasks:
             return []
 
-        all_tasks = [Task.model_validate(db_task, from_attributes=True) for db_task in db_tasks]
+        all_tasks = [Task.model_validate(db_task, from_attributes=True) for db_task in all_db_tasks]
         now = datetime.now(tz=timezone.utc)
 
-        tasks_to_remind_about = [
-            task for task in all_tasks
-            if task.next_time_to_do < now
-        ]
+        tasks_to_remind_about = []
+        for task in all_tasks:
+            delay_active = not task.delayed_until or task.delayed_until < now
+            should_remind = task.remind_after < now and not delay_active
+            if should_remind:
+                tasks_to_remind_about.append(task)
+
         tasks_to_remind_about = sorted(tasks_to_remind_about, key=lambda task: task.id)
 
         logger.info(f'Таски, о которых нужно напомнить: {tasks_to_remind_about}')

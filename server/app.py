@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta
 
 from anyio.functools import lru_cache
-from fastapi import FastAPI, Depends, HTTPException
-from pydantic import Field
+from fastapi import FastAPI, Depends, HTTPException, Query
 from starlette import status
 
 from database import DatabaseClient, DatabaseClientConfig
@@ -39,8 +38,8 @@ async def mark_task_done(task_id: int, database_client: DatabaseClient = Depends
 @fastapi_app.get("/delay_task", status_code=status.HTTP_200_OK)
 async def delay_task(
     task_id: int,
-    hours: int | None = Field(gt=0, default=None),
-    times: int | None = Field(gt=0, default=None),
+    hours: int | None = Query(gt=0, default=None),
+    times: int | None = Query(gt=0, default=None),
     database_client: DatabaseClient = Depends(get_database_client)
 ) -> None:
     db_task = database_client.get_task(task_id)

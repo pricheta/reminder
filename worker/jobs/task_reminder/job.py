@@ -1,10 +1,10 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 
 from database import DatabaseClient
 from vk_client import VKClient
 
-from worker.task_reminder.models import Task
+from worker.jobs.task_reminder.models import Task
 
 
 logger = logging.getLogger(__name__)

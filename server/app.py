@@ -1,11 +1,11 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from anyio.functools import lru_cache
 from fastapi import FastAPI, Depends, HTTPException, Query
 from starlette import status
 
 from database import DatabaseClient, DatabaseClientConfig
-from worker.task_reminder.models import Task
+from worker.jobs.task_reminder.models import Task
 
 fastapi_app = FastAPI(docs_url="/")
 

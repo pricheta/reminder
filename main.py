@@ -14,7 +14,7 @@ import uvicorn
 
 from server.app import fastapi_app
 from worker.app import Worker, WorkerConfig
-from worker.task_reminder.task import TaskReminder
+from worker.jobs.task_reminder.job import TaskReminder
 from vk_client import VKClient, VKClientConfig
 from database import DatabaseClientConfig, DatabaseClient
 

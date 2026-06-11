@@ -8,13 +8,14 @@ class Base(DeclarativeBase):
     pass
 
 
-class Task(Base):
+class TaskORM(Base):
     __tablename__ = "tasks"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     frequency_hours: Mapped[int] = mapped_column(Integer, nullable=True)
-    next_time_to_do: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    delayed_until: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    remind_after: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
 
 class DatabaseClientConfig(BaseSettings):
@@ -44,28 +45,23 @@ class DatabaseClient:
             expire_on_commit=False
         )
 
-    def get_task(self, task_id: int) -> Task | None:
+    def get_task(self, task_id: int) -> TaskORM | None:
         with self.session_maker() as session:
-            statement = select(Task).where(Task.id == task_id)
+            statement = select(TaskORM).where(TaskORM.id == task_id)
             return session.scalars(statement).first()
 
-    def get_all_tasks(self) -> list[Task]:
+    def get_all_tasks(self) -> list[TaskORM]:
         with self.session_maker() as session:
-            statement = select(Task)
+            statement = select(TaskORM)
             return list(session.scalars(statement))
 
-    def update_task_next_time_to_do(self, task_id: int, next_time_to_do: datetime):
+    def update(self, task: TaskORM):
         with self.session_maker() as session:
-            statement = (
-                update(Task)
-                .where(Task.id == task_id)
-                .values(next_time_to_do=next_time_to_do)
-            )
-            session.execute(statement)
+            session.merge(task)
             session.commit()
 
-    def delete_task(self, task_id: int) -> None:
+    def delete(self, task_id: int) -> None:
         with self.session_maker() as session:
-            statement = delete(Task).where(Task.id == task_id)
+            statement = delete(TaskORM).where(TaskORM.id == task_id)
             session.execute(statement)
             session.commit()

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from anyio.functools import lru_cache
 from fastapi import FastAPI, Depends, HTTPException, Query
@@ -22,37 +22,29 @@ async def mark_task_done(task_id: int, database_client: DatabaseClient = Depends
     if not db_task:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    task = Task.model_validate(db_task, from_attributes=True)
-
-    if not task.frequency_hours:
-        database_client.delete_task(task_id=task.id)
+    if not db_task.frequency_hours:
+        database_client.delete(task_id=db_task.id)
         return
 
-    now = datetime.now()
-    while task.next_time_to_do < now:
-        task.next_time_to_do += timedelta(hours=task.frequency_hours)
+    now = datetime.now(tz=timezone.utc)
+    while db_task.remind_after < now:
+        db_task.remind_after += timedelta(hours=db_task.frequency_hours)
 
-    database_client.update_task_next_time_to_do(task_id=task.id, next_time_to_do=task.next_time_to_do)
+    database_client.update(db_task)
 
 
 @fastapi_app.get("/delay_task", status_code=status.HTTP_200_OK)
 async def delay_task(
     task_id: int,
-    hours: int | None = Query(gt=0, default=None),
-    times: int | None = Query(gt=0, default=None),
+    minutes: int = Query(ge=0, default=0),
+    hours: int = Query(ge=0, default=0),
+    days: int = Query(ge=0, default=0),
     database_client: DatabaseClient = Depends(get_database_client)
-) -> None:
+) -> Task:
     db_task = database_client.get_task(task_id)
     if not db_task:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    task = Task.model_validate(db_task, from_attributes=True)
+    db_task.delayed_until = db_task.remind_after + timedelta(minutes=minutes, hours=hours, days=days)
 
-    if hours:
-        task.next_time_to_do += timedelta(hours=hours)
-
-    if task.frequency_hours and times:
-        for _ in range(times):
-            task.next_time_to_do += timedelta(hours=task.frequency_hours)
-
-    database_client.update_task_next_time_to_do(task_id=task.id, next_time_to_do=task.next_time_to_do)
+    return Task.model_validate(db_task, from_attributes=True)

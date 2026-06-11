@@ -7,4 +7,5 @@ class Task(BaseModel):
     id: int
     title: str
     frequency_hours: int | None = Field(gt=0, default=None)
-    next_time_to_do: datetime
+    delayed_until: datetime | None
+    remind_after: datetime

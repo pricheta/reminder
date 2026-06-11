@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from database import DatabaseClient
 from vk_client import VKClient
@@ -41,7 +41,7 @@ class TaskReminder:
             return []
 
         all_tasks = [Task.model_validate(db_task, from_attributes=True) for db_task in db_tasks]
-        now = datetime.now()
+        now = datetime.now(tz=timezone.utc)
 
         tasks_to_remind_about = [
             task for task in all_tasks

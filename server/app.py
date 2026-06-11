@@ -26,7 +26,7 @@ async def mark_task_done(task_id: int, database_client: DatabaseClient = Depends
         database_client.delete(task_id=db_task.id)
         return
 
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now()
     while db_task.remind_after < now:
         db_task.remind_after += timedelta(hours=db_task.frequency_hours)
 

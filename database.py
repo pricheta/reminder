@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import String, Integer, DateTime, create_engine, select, update, Boolean, delete
+from sqlalchemy import String, Integer, DateTime, create_engine, select, delete, PrimaryKeyConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 from datetime import datetime
 
@@ -17,6 +17,10 @@ class TaskORM(Base):
     frequency_hours: Mapped[int] = mapped_column(Integer, nullable=True)
     delayed_until: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     remind_after: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
+    __table_args__ = (
+        PrimaryKeyConstraint("user_id", "id", name="pk_tasks_user_id_id"),
+    )
 
 
 class DatabaseClientConfig(BaseSettings):

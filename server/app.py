@@ -45,7 +45,8 @@ async def delay_task(
     if not db_task:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    db_task.delayed_until = db_task.remind_after + timedelta(minutes=minutes, hours=hours, days=days)
+    now = datetime.now()
+    db_task.delayed_until = now + timedelta(minutes=minutes, hours=hours, days=days)
 
     database_client.update(db_task)
 

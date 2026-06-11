@@ -31,8 +31,9 @@ class TaskReminder:
         for task in tasks_to_remind_about:
             message += f"{task}\n"
 
-        logger.info('Отправляю напоминалку с сообщением:\n\n{message}')
+        logger.info(f'Sending message')
         self.vk_client.send_message(message)
+        logger.info(f'Message sent successfully')
 
 
     def _get_tasks_to_remind_about(self) -> list[Task]:
@@ -52,5 +53,5 @@ class TaskReminder:
 
         tasks_to_remind_about = sorted(tasks_to_remind_about, key=lambda task: task.id)
 
-        logger.info(f'Таски, о которых нужно напомнить: {tasks_to_remind_about}')
+        logger.info(f'{tasks_to_remind_about=}')
         return tasks_to_remind_about

@@ -24,7 +24,7 @@ class Worker:
         self.tasks.append(task)
 
     def run(self) -> None:
-        logger.info(f"Worker started at")
+        logger.info(f"Worker started")
 
         while True:
             start_time = time.time()

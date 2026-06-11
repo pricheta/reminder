@@ -1,6 +1,14 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+import logging
+logging.basicConfig(
+    filename='logs.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - [%(name)s] - %(message)s',
+    encoding='utf-8'
+)
+
 import threading
 import uvicorn
 

@@ -1,5 +1,6 @@
 /.env
 /data/
+/logs/
+
 /alembic.ini
 /alembic/
-/logs.log

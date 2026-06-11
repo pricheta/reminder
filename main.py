@@ -3,7 +3,7 @@ load_dotenv()
 
 import logging
 logging.basicConfig(
-    filename='logs.log',
+    filename='logs/backend.log',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - [%(name)s] - %(message)s',
     encoding='utf-8'

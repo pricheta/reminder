@@ -1,6 +1,3 @@
-from dotenv import load_dotenv
-load_dotenv()
-
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -21,8 +18,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from database import Base, DatabaseClientConfig
-
+from database import Base
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -43,8 +39,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    database_config = DatabaseClientConfig()
-    url = database_config.database_url
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,

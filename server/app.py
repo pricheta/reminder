@@ -51,3 +51,13 @@ async def delay_task(
     database_client.update(db_task)
 
     return Task.model_validate(db_task, from_attributes=True)
+
+@fastapi_app.get("/delay_all_tasks", status_code=status.HTTP_200_OK)
+async def delay_all_tasks(
+    minutes: int = Query(ge=0, default=0),
+    hours: int = Query(ge=0, default=0),
+    days: int = Query(ge=0, default=0),
+    database_client: DatabaseClient = Depends(get_database_client)
+) -> None:
+    for task in database_client.get_all_tasks():
+        await delay_task(task.id, minutes=minutes, hours=hours, days=days, database_client=database_client)

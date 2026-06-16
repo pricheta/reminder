@@ -13,7 +13,7 @@ WorkerJob = Callable[[], None]
 
 
 class WorkerConfig(BaseModel):
-    REPEAT_FREQUENCY_SECONDS: int = 300
+    REPEAT_FREQUENCY_SECONDS: int = 15 * 60
 
 
 class Worker:
